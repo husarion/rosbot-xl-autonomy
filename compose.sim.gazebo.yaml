@@ -1,0 +1,46 @@
+x-gpu-config:
+  &gpu-config
+  runtime: nvidia
+  environment:
+    - DISPLAY=${DISPLAY:?err}
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=all
+
+services:
+
+  rviz:
+    image: husarion/rviz2:galactic
+    <<: *gpu-config 
+    container_name: rviz
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./config/rosbot.rviz:/root/.rviz2/default.rviz
+
+  rosbot-xl:
+    image: husarion/rosbot-xl-gazebo:humble
+    <<: *gpu-config 
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    command: ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}
+
+  slam:
+    image: husarion/navigation2:humble
+    volumes:
+      - ./config/${SLAM_MODE:-slam}_params.yaml:/params.yaml
+      - ./maps:/maps
+    environment:
+      - SLAM_MODE=${SLAM_MODE:-slam}
+    command: >
+      ros2 launch nav2_bringup ${SLAM_MODE:-slam}_launch.py
+        params_file:=/params.yaml
+        map:=/maps/map.yaml
+        use_sim_time:=True
+
+  navigation:
+    image: husarion/navigation2:humble
+    volumes:
+      - ./config/nav2_params.yaml:/params.yaml
+    command: >
+      ros2 launch nav2_bringup navigation_launch.py 
+        params_file:=/params.yaml 
+        use_sim_time:=True

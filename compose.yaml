@@ -1,0 +1,52 @@
+x-net-config:
+  &net-config
+  network_mode: host
+  ipc: host
+  env_file: net.env
+
+services:
+
+  rosbot-xl:
+    image: husarion/rosbot-xl:humble
+    <<: *net-config
+    command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
+
+  microros:
+    image: husarion/micro-ros-agent:humble
+    <<: *net-config
+    environment:
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+    command: ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
+
+  rplidar:
+    image: husarion/rplidar:humble
+    <<: *net-config
+    devices:
+      - ${LIDAR_SERIAL:?err}:/dev/ttyUSB0
+    command: ros2 launch sllidar_ros2 sllidar_launch.py serial_baudrate:=${LIDAR_BAUDRATE:-115200}
+
+  navigation:
+    image: husarion/navigation2:humble
+    <<: *net-config
+    volumes:
+      - ./config/nav2_params.yaml:/params.yaml
+    command: >
+      ros2 launch nav2_bringup navigation_launch.py 
+        params_file:=/params.yaml 
+        use_sim_time:=False;
+
+  slam:
+    image: husarion/navigation2:humble
+    <<: *net-config
+    depends_on:
+      rplidar: { condition: service_healthy }
+    volumes:
+      - ./config/${SLAM_MODE:-slam}_params.yaml:/params.yaml
+      - ./maps:/maps
+    environment:
+      - SLAM_MODE=${SLAM_MODE:-slam}
+    command: >
+      ros2 launch nav2_bringup ${SLAM_MODE:-slam}_launch.py
+        params_file:=/params.yaml
+        map:=/maps/map.yaml
+        use_sim_time:=False

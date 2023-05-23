@@ -1,0 +1,32 @@
+x-net-config:
+  &net-config
+  network_mode: host
+  ipc: host
+  env_file: net.env
+
+x-gpu-config:
+  &gpu-config
+  runtime: nvidia
+  environment:
+    - DISPLAY=${DISPLAY:?err}
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=all
+
+x-cpu-config:
+  &cpu-config
+  environment:
+    - DISPLAY=${DISPLAY:?err}
+    - LIBGL_ALWAYS_SOFTWARE=1
+
+services:
+
+  # if you have NVDIA GPU and NVIDIA Container Toolkit, you can replace
+  # "cpu-config" with "gpu-config"
+  rviz:
+    image: husarion/rviz2:galactic
+    <<: [ *net-config, *cpu-config ]
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./config/rosbot.rviz:/root/.rviz2/default.rviz
+
+
