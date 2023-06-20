@@ -135,5 +135,7 @@ Start the containers in a new terminal:
 
 ```bash
 xhost +local:docker && \
-SLAM_MODE=slam docker compose -f compose.sim.gazebo.yaml up -d
+SLAM_MODE=slam docker compose -f compose.sim.gazebo.yaml up
 ```
+
+To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in rviz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in Rviz to inform the robot of its location on the map.
