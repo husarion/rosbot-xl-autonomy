@@ -17,16 +17,16 @@ services:
       - ./config/rosbot.rviz:/root/.rviz2/default.rviz
 
   rosbot-xl:
-    image: husarion/rosbot-xl-gazebo:humble
+    image: husarion/webots:humble-dev
     <<: *gpu-config
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-    command: ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}
+    command: ros2 launch webots_ros2_husarion rosbot_xl_launch.py
 
   slam:
     image: husarion/navigation2:humble
     volumes:
-      - ./config/${SLAM_MODE:-slam}_params.yaml:/params.yaml
+      - ./config/${SLAM_MODE:-slam}_webots_params.yaml:/params.yaml
       - ./maps:/maps
     environment:
       - SLAM_MODE=${SLAM_MODE:-slam}

@@ -8,7 +8,7 @@ This repository contains the Docker Compose setup for both PC and ROSbot XL. You
 
 ```bash
 git clone https://github.com/husarion/rosbot-xl-autonomy
-cd rosbot-xl-autonomy 
+cd rosbot-xl-autonomy
 export ROSBOT_ADDR=10.5.10.123 # Replace with your own ROSbot's IP or Husarnet hostname
 ./sync_with_rosbot.sh $ROSBOT_ADDR
 ```
@@ -53,9 +53,9 @@ RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 > **VPN connection**
 >
 > If you choose to use the VPN option, both your ROSbot XL and laptop must be connected to the same Husarnet network.
-> 
+>
 > If they are not, follow this guide:
-> 
+>
 > [Connecting ROSbot and Laptop over the Internet (VPN)](https://husarion.com/software/os/remote-access/).
 
 ## Verifying Hardware Configuration
@@ -127,7 +127,7 @@ To direct the robot to explore new areas autonomously and create a map (in the `
 
 > **Prerequisites**
 >
-> The `compose.sim.gazebo.yaml` file uses NVIDIA Container Runtime. Make sure you have NVIDIA GPU and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed.
+> The `compose.sim.gazebo.yaml` and `compose.sim.webots.yaml` files use NVIDIA Container Runtime. Make sure you have NVIDIA GPU and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed.
 
 ### Gazebo
 
@@ -136,6 +136,15 @@ Start the containers in a new terminal:
 ```bash
 xhost +local:docker && \
 SLAM_MODE=slam docker compose -f compose.sim.gazebo.yaml up
+```
+
+### Webots
+
+Start the containers in a new terminal:
+
+```bash
+xhost +local:docker && \
+SLAM_MODE=slam docker compose -f compose.sim.webots.yaml up
 ```
 
 To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in rviz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in Rviz to inform the robot of its location on the map.
