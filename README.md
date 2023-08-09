@@ -21,7 +21,7 @@ To flash the Micro-ROS based firmware for STM32F4 microcontroller responisble fo
 docker stop rosbot-xl microros 2>/dev/null || true && \
 docker run --rm -it --privileged \
 --mount type=bind,source=/dev/ttyUSBDB,target=/dev/ttyUSBDB \
-husarion/rosbot-xl:humble \
+husarion/rosbot-xl:humble-0.8.2-20230712 \
 flash-firmware.py -p /dev/ttyUSBDB
 ```
 
@@ -48,6 +48,12 @@ RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 # RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 # FASTRTPS_DEFAULT_PROFILES_FILE=/husarnet-fastdds.xml
 # CYCLONEDDS_URI=file:///husarnet-cyclonedds.xml
+
+# =======================================
+# Setup ROS_DOMAIN_ID for all containers
+# =======================================
+
+ROS_DOMAIN_ID=123
 ```
 
 > **VPN connection**
@@ -66,7 +72,6 @@ To ensure proper hardware configuration, review the content of the `.env` file a
 # =======================================
 # Hardware config
 # =======================================
-LIDAR_SERIAL=/dev/ttyUSB1
 
 # for RPLIDAR A2M8 (red circle around the sensor):
 # LIDAR_BAUDRATE=115200

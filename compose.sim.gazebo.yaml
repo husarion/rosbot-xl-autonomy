@@ -9,22 +9,21 @@ x-gpu-config:
 services:
 
   rviz:
-    image: husarion/rviz2:galactic
+    image: husarion/rviz2:humble-11.2.6-20230809
     <<: *gpu-config 
-    container_name: rviz
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./config/rosbot.rviz:/root/.rviz2/default.rviz
 
   rosbot-xl:
-    image: husarion/rosbot-xl-gazebo:humble
+    image: husarion/rosbot-xl-gazebo:humble-0.8.2-20230712
     <<: *gpu-config 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command: ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}
 
   slam:
-    image: husarion/navigation2:humble
+    image: husarion/navigation2:humble-1.1.8-20230809
     volumes:
       - ./config/${SLAM_MODE:-slam}_params.yaml:/params.yaml
       - ./maps:/maps
@@ -37,7 +36,7 @@ services:
         use_sim_time:=True
 
   navigation:
-    image: husarion/navigation2:humble
+    image: husarion/navigation2:humble-1.1.8-20230809
     volumes:
       - ./config/nav2_params.yaml:/params.yaml
     command: >

@@ -23,7 +23,7 @@ services:
   # if you have NVDIA GPU and NVIDIA Container Toolkit, you can replace
   # "cpu-config" with "gpu-config"
   rviz:
-    image: husarion/rviz2:galactic
+    image: husarion/rviz2:humble-11.2.6-20230809
     <<: [ *net-config, *cpu-config ]
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
