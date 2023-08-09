@@ -29,8 +29,8 @@ services:
     volumes:
       - ./config/nav2_params_mppi.yaml:/params.yaml
     command: >
-      ros2 launch nav2_bringup navigation_launch.py 
-        params_file:=/params.yaml 
+      ros2 launch nav2_bringup navigation_launch.py
+        params_file:=/params.yaml
         use_sim_time:=False;
 
   slam:
