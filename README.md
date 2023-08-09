@@ -83,7 +83,7 @@ The default options should be suitable.
 
 ## I. Running on a Physical Robot
 
-### ROSbot 2R
+### ROSbot XL
 
 Pull the Docker images defined in `compose.yaml`:
 
