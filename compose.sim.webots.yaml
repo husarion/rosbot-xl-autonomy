@@ -9,9 +9,8 @@ x-gpu-config:
 services:
 
   rviz:
-    image: husarion/rviz2:humble-11.2.5-20230531-stable
+    image: husarion/rviz2:humble-11.2.6-20230809
     <<: *gpu-config
-    container_name: rviz
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./config/rosbot.rviz:/root/.rviz2/default.rviz
@@ -24,7 +23,7 @@ services:
     command: ros2 launch webots_ros2_husarion rosbot_xl_launch.py
 
   slam:
-    image: husarion/navigation2:humble-1.1.6-20230427-stable
+    image: husarion/navigation2:humble-1.1.8-20230809
     volumes:
       - ./config/${SLAM_MODE:-slam}_webots_params.yaml:/params.yaml
       - ./maps:/maps
@@ -37,7 +36,7 @@ services:
         use_sim_time:=True
 
   navigation:
-    image: husarion/navigation2:humble-1.1.6-20230427-stable
+    image: husarion/navigation2:humble-1.1.8-20230809
     volumes:
       - ./config/nav2_params.yaml:/params.yaml
     command: >
