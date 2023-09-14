@@ -1,6 +1,6 @@
 # rosbot-xl-autonomy
 
-A step-by-step guide for the ROSbot XL to map an unknown environment and navigate autonomously within it from Rviz.
+A step-by-step guide for the ROSbot XL to map an unknown environment and navigate autonomously within it from RViz.
 
 ## Repository Setup
 
@@ -24,6 +24,18 @@ docker run --rm -it --privileged \
 husarion/rosbot-xl:humble-0.8.2-20230712 \
 flash-firmware.py -p /dev/ttyUSBDB
 ```
+
+## Verifying User Configuration
+
+To ensure proper user configuration, review the content of the `.env` file and select the appropriate configuration (the default options should be suitable).
+
+### Parameters
+- **`LIDAR_BAUDRATE`** - depend on mounted LiDAR
+- **`MECANUM`** - wheel type 
+- **`SLAM`** - choose between mapping and localization modes
+- **`MAP_FILENAME`** - load map from file (only if SLAM=localization)
+- **`CONTROLLER`** - choose controller type
+
 
 ## Choosing the Network (DDS) Config
 
@@ -64,67 +76,32 @@ ROS_DOMAIN_ID=123
 >
 > [Connecting ROSbot and Laptop over the Internet (VPN)](https://husarion.com/software/os/remote-access/).
 
-## Verifying Hardware Configuration
-
-To ensure proper hardware configuration, review the content of the `.env` file and select the appropriate LIDAR baudrate and serial port. The hardware configuration is defined as follows:
-
-```bash
-# =======================================
-# Hardware config
-# =======================================
-
-# for RPLIDAR A2M8 (red circle around the sensor):
-# LIDAR_BAUDRATE=115200
-# for RPLIDAR A2M12 and A3 (violet circle around the sensor):
-LIDAR_BAUDRATE=256000
-```
-
-The default options should be suitable.
-
 ## I. Running on a Physical Robot
 
 ### ROSbot XL
 
-Pull the Docker images defined in `compose.yaml`:
+Pull and run Docker images defined in `compose.yaml`:
 
 ```bash
 docker compose pull
+docker compose up -d
 ```
 
-#### Option 1: SLAM Mode
-
-To start a mapping mode
-
-```bash
-SLAM_MODE=slam docker compose up -d
-```
-
-#### Option 2: Localization Mode
-
-To allow the ROSbot XL to localize on a previously created map using AMCL, run:
-
-```bash
-SLAM_MODE=localization docker compose up -d
-```
-
-> **Note:** You do not need to stop the containers to switch between modes.
-
-### Stopping the Containers
-
-```bash
-docker compose down
-```
+> **Note:** You need to restart containers to switch between modes. Use following command to stop containers.
+> ```bash
+> docker compose down
+> ```
 
 ### PC
 
-To initiate a user interface and navigation stack based on Rviz, execute these commands on your PC:
+To initiate a user interface and navigation stack based on RViz, execute these commands on your PC:
 
 ```bash
 xhost +local:docker && \
 docker compose -f compose.pc.yaml up
 ```
 
-To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in rviz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in Rviz to inform the robot of its location on the map.
+To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in RViz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in RViz to inform the robot of its location on the map.
 
 -----------
 
@@ -152,4 +129,4 @@ xhost +local:docker && \
 SLAM_MODE=slam docker compose -f compose.sim.webots.yaml up
 ```
 
-To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in rviz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in Rviz to inform the robot of its location on the map.
+To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in RViz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in RViz to inform the robot of its location on the map.
