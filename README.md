@@ -46,9 +46,7 @@ Edit `net.env` file and uncomment on of the configs:
 - **`ROS_DOMAIN_ID`**
 
 > [!NOTE]
-> If you choose to use the VPN option, both your ROSbot XL and laptop must be connected to the same Husarnet network.
->
-> If they are not, follow this guide: [Connecting ROSbot and Laptop over the Internet (VPN)](https://husarion.com/software/os/remote-access/).
+> If you choose to use the VPN option, both your ROSbot XL and laptop must be connected to the same Husarnet network. If they are not, follow this guide: [Connecting ROSbot and Laptop over the Internet (VPN)](https://husarion.com/software/os/remote-access/).
 
 ## I. Running on a Physical Robot
 
