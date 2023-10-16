@@ -31,9 +31,8 @@ To ensure proper user configuration, review the content of the `.env` file and s
 
 ### Parameters
 - **`LIDAR_BAUDRATE`** - depend on mounted LiDAR
-- **`MECANUM`** - wheel type 
+- **`MECANUM`** - wheel type
 - **`SLAM`** - choose between mapping and localization modes
-- **`MAP_FILENAME`** - load map from file (only if SLAM=localization)
 - **`CONTROLLER`** - choose controller type
 
 
@@ -41,40 +40,15 @@ To ensure proper user configuration, review the content of the `.env` file and s
 
 Edit `net.env` file and uncomment on of the configs:
 
-```bash
-# =======================================
-# Network config options (uncomment one)
-# =======================================
 
-# 1. Fast DDS + LAN
-# RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+### Parameters
+- **`RMW_IMPLEMENTATION`**
+- **`ROS_DOMAIN_ID`**
 
-# 2. Cyclone DDS + LAN
-RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-
-# 3. Fast DDS + VPN
-# RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-# FASTRTPS_DEFAULT_PROFILES_FILE=/husarnet-fastdds.xml
-
-# 4. Cyclone DDS + VPN
-# RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-# FASTRTPS_DEFAULT_PROFILES_FILE=/husarnet-fastdds.xml
-# CYCLONEDDS_URI=file:///husarnet-cyclonedds.xml
-
-# =======================================
-# Setup ROS_DOMAIN_ID for all containers
-# =======================================
-
-ROS_DOMAIN_ID=123
-```
-
-> **VPN connection**
->
+> [!NOTE]
 > If you choose to use the VPN option, both your ROSbot XL and laptop must be connected to the same Husarnet network.
 >
-> If they are not, follow this guide:
->
-> [Connecting ROSbot and Laptop over the Internet (VPN)](https://husarion.com/software/os/remote-access/).
+> If they are not, follow this guide: [Connecting ROSbot and Laptop over the Internet (VPN)](https://husarion.com/software/os/remote-access/).
 
 ## I. Running on a Physical Robot
 
@@ -87,10 +61,7 @@ docker compose pull
 docker compose up -d
 ```
 
-> **Note:** You need to restart containers to switch between modes. Use following command to stop containers.
-> ```bash
-> docker compose down
-> ```
+> **Note:** You need to restart containers to switch between modes. Use following command to stop container: `docker compose down`.
 
 ### PC
 
@@ -107,8 +78,7 @@ To direct the robot to explore new areas autonomously and create a map (in the `
 
 ## II. Simulation
 
-> **Prerequisites**
->
+> [!IMPORTANT]
 > The `compose.sim.gazebo.yaml` and `compose.sim.webots.yaml` files use NVIDIA Container Runtime. Make sure you have NVIDIA GPU and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed.
 
 ### Gazebo

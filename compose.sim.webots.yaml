@@ -32,7 +32,7 @@ services:
     command: >
       ros2 launch nav2_bringup ${SLAM_MODE:-slam}_launch.py
         params_file:=/params.yaml
-        map:=/maps/${MAP_FILENAME:-map}.yaml
+        map:=/maps/map.yaml
         use_sim_time:=True
 
   navigation:
