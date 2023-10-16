@@ -6,10 +6,28 @@ x-net-config:
 
 services:
 
+  rosbot-xl:
+    image: husarion/rosbot-xl:humble-0.8.2-20230712
+    <<: *net-config
+    command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
+
+  microros:
+    image: husarion/micro-xrce-agent:v2.4.1
+    <<: *net-config
+    command: MicroXRCEAgent udp4 --port 8888
+
+  rplidar:
+    image: husarion/rplidar:humble
+    <<: *net-config
+    devices:
+      - /dev/ttyRPLIDAR:/dev/ttyUSB0
+    command: ros2 launch sllidar_ros2 sllidar_launch.py serial_baudrate:=${LIDAR_BAUDRATE:-115200}
 
   slam:
     image: husarion/navigation2:humble-1.1.8-20230809
     <<: *net-config
+    depends_on:
+      rplidar: { condition: service_healthy }
     volumes:
       - ./config/${SLAM_MODE:-slam}_params.yaml:/params.yaml
       - ./maps:/maps
@@ -21,3 +39,12 @@ services:
         map:=/maps/map.yaml
         use_sim_time:=False
 
+  navigation:
+    image: husarion/navigation2:humble-1.1.8-20230809
+    <<: *net-config
+    volumes:
+      - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
+    command: >
+      ros2 launch nav2_bringup navigation_launch.py
+        params_file:=/params.yaml
+        use_sim_time:=False;
