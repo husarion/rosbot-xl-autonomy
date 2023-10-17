@@ -30,18 +30,18 @@ flash-firmware.py -p /dev/ttyUSBDB
 To ensure proper user configuration, review the content of the `.env` file and select the appropriate configuration (the default options should be suitable).
 
 ### Parameters
+
 - **`LIDAR_BAUDRATE`** - depend on mounted LiDAR
 - **`MECANUM`** - wheel type
 - **`SLAM`** - choose between mapping and localization modes
 - **`CONTROLLER`** - choose controller type
 
-
 ## Choosing the Network (DDS) Config
 
 Edit `net.env` file and uncomment on of the configs:
 
-
 ### Parameters
+
 - **`RMW_IMPLEMENTATION`**
 - **`ROS_DOMAIN_ID`**
 
@@ -59,7 +59,8 @@ docker compose pull
 docker compose up -d
 ```
 
-> **Note:** You need to restart containers to switch between modes. Use following command to stop container: `docker compose down`.
+> [!NOTE]
+> You need to restart containers to switch between modes. Use following command to stop container: `docker compose down`.
 
 ### PC
 
@@ -72,7 +73,7 @@ docker compose -f compose.pc.yaml up
 
 To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in RViz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in RViz to inform the robot of its location on the map.
 
------------
+---
 
 ## II. Simulation
 
@@ -85,7 +86,7 @@ Start the containers in a new terminal:
 
 ```bash
 xhost +local:docker && \
-SLAM_MODE=slam docker compose -f compose.sim.gazebo.yaml up
+docker compose -f compose.sim.gazebo.yaml up
 ```
 
 ### Webots
@@ -94,7 +95,7 @@ Start the containers in a new terminal:
 
 ```bash
 xhost +local:docker && \
-SLAM_MODE=slam docker compose -f compose.sim.webots.yaml up
+docker compose -f compose.sim.webots.yaml up
 ```
 
 To direct the robot to explore new areas autonomously and create a map (in the `slam` mode) or simply to position itself within an existing map, click on the **[2D Goal Pose]** button in RViz. It is important to note that when switching from `slam` to `localization` mode, you should use the **[2D Pose Estimate]** button in RViz to inform the robot of its location on the map.
