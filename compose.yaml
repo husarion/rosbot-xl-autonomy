@@ -23,16 +23,6 @@ services:
       - /dev/ttyRPLIDAR:/dev/ttyUSB0
     command: ros2 launch sllidar_ros2 sllidar_launch.py serial_baudrate:=${LIDAR_BAUDRATE:-115200}
 
-  navigation:
-    image: husarion/navigation2:humble-1.1.8-20230809
-    <<: *net-config
-    volumes:
-      - ./config/nav2_params_mppi.yaml:/params.yaml
-    command: >
-      ros2 launch nav2_bringup navigation_launch.py
-        params_file:=/params.yaml
-        use_sim_time:=False;
-
   slam:
     image: husarion/navigation2:humble-1.1.8-20230809
     <<: *net-config
@@ -48,3 +38,13 @@ services:
         params_file:=/params.yaml
         map:=/maps/map.yaml
         use_sim_time:=False
+
+  navigation:
+    image: husarion/navigation2:humble-1.1.8-20230809
+    <<: *net-config
+    volumes:
+      - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
+    command: >
+      ros2 launch nav2_bringup navigation_launch.py
+        params_file:=/params.yaml
+        use_sim_time:=False;

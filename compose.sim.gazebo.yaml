@@ -38,7 +38,7 @@ services:
   navigation:
     image: husarion/navigation2:humble-1.1.8-20230809
     volumes:
-      - ./config/nav2_params.yaml:/params.yaml
+      - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
     command: >
       ros2 launch nav2_bringup navigation_launch.py
         params_file:=/params.yaml
