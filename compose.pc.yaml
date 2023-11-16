@@ -17,7 +17,7 @@ x-cpu-config:
   environment:
     - DISPLAY=${DISPLAY:?err}
     - LIBGL_ALWAYS_SOFTWARE=1
-
+  
 services:
 
   # if you have NVDIA GPU and NVIDIA Container Toolkit, you can replace
@@ -28,5 +28,3 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./config/rosbot.rviz:/root/.rviz2/default.rviz
-
-
