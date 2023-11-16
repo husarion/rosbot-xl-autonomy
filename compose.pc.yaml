@@ -17,7 +17,7 @@ x-cpu-config:
   environment:
     - DISPLAY=${DISPLAY:?err}
     - LIBGL_ALWAYS_SOFTWARE=1
-  
+
 services:
 
   # if you have NVDIA GPU and NVIDIA Container Toolkit, you can replace
