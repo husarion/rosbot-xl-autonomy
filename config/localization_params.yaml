@@ -46,8 +46,8 @@ amcl:
 
     max_beams: 60
 
-    max_particles: 25000
-    min_particles: 6000
+    max_particles: 2000
+    min_particles: 500
 
     pf_err: 0.05
     pf_z: 0.99
