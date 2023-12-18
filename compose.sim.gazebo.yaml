@@ -22,24 +22,17 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command: ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}
 
-  slam:
-    image: husarion/navigation2:humble-1.1.8-20230809
-    volumes:
-      - ./config/${SLAM_MODE:-slam}_params.yaml:/params.yaml
-      - ./maps:/maps
-    environment:
-      - SLAM_MODE=${SLAM_MODE:-slam}
-    command: >
-      ros2 launch nav2_bringup ${SLAM_MODE:-slam}_launch.py
-        params_file:=/params.yaml
-        map:=/maps/map.yaml
-        use_sim_time:=True
-
   navigation:
-    image: husarion/navigation2:humble-1.1.8-20230809
+    image: husarion/navigation2:humble-arm64-from-sourece
+    <<: *gpu-config
     volumes:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
+      - ./maps:/maps
+    environment:
+      - SAVE_MAP_PERIOD=${SAVE_MAP_PERIOD}
     command: >
-      ros2 launch nav2_bringup navigation_launch.py
+      ros2 launch nav2_bringup bringup_launch.py
+        slam:=${SLAM:-True}
         params_file:=/params.yaml
+        map:=/maps/map.yaml
         use_sim_time:=True

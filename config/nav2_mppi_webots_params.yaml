@@ -430,7 +430,9 @@ slam_toolbox:
     stack_size_to_use: 40000000 #// program needs a larger stack size to serialize large maps
 
     # General Parameters
-    use_scan_matching: true
+    # The localization correction based on the lidar measurements is turned off because of bug with lidar in webots simulator.
+    # https://github.com/cyberbotics/webots/issues/5540
+    use_scan_matching: false
     use_scan_barycenter: true
     minimum_travel_distance: 0.4
     minimum_travel_heading: 0.5
