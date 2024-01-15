@@ -1,6 +1,0 @@
-{
-  "recommendations": [
-      "mikestead.dotenv",
-      "redhat.vscode-yaml",
-  ]
-}

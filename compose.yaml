@@ -7,7 +7,7 @@ x-net-config:
 services:
 
   rosbot-xl:
-    image: husarion/rosbot-xl:humble-0.8.2-20230712
+    image: husarion/rosbot-xl:humble-0.8.12-20240115
     <<: *net-config
     command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
 
@@ -24,19 +24,45 @@ services:
     command: ros2 launch sllidar_ros2 sllidar_launch.py serial_baudrate:=${LIDAR_BAUDRATE:-115200}
 
   navigation:
-    image: husarion/navigation2:humble-arm64-from-sourece
-    <<: *net-config
-    depends_on:
-      rplidar: { condition: service_healthy }
-      rosbot-xl: { condition: service_healthy }
+    image: husarion/navigation2:humble-namespace
+    <<:
+      - *net-config
+    # depends_on:
+    #   rplidar: { condition: service_healthy }
+    #   rosbot: { condition: service_healthy }
     volumes:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
-    environment:
-      - SAVE_MAP_PERIOD=${SAVE_MAP_PERIOD}
     command: >
-      ros2 launch nav2_bringup bringup_launch.py
+      ros2 launch /husarion_utils/bringup_launch.py
         slam:=${SLAM:-True}
         params_file:=/params.yaml
         map:=/maps/map.yaml
         use_sim_time:=False
+
+  foxglove:
+    image: husarion/foxglove:1.83.0
+    ports:
+      - 8080:8080
+      - 8765:8765
+    volumes:
+      - ./config/layout.json:/foxglove/default-layout.json
+    environment:
+      # - DS_TYPE=rosbridge-websocket
+      # - DS_PORT=9090
+      - DS_TYPE=foxglove-websocket
+      - DS_PORT=8765
+      - DS_HOST=foxglove-ds
+      - UI_PORT=8080
+      - DISABLE_CACHE=true
+      - DISABLE_INTERACTION=false
+
+  # rosbridge-ds:
+  #   image: husarion/rosbridge-server:humble-1.3.1-20230831-stable
+  #   ports:
+  #     - 9090:9090
+  #   command: ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+
+  foxglove-ds:
+    image: husarion/foxglove-bridge:humble-0.7.3-20231222
+    command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765 capabilities:=[clientPublish,connectionGraph,assets]
