@@ -1,35 +1,72 @@
-x-net-config:
-  &net-config
+x-common-config:
+  &common-config
   network_mode: host
   ipc: host
-  env_file: net.env
+  env_file: .env
+
+x-ros-envs:
+  &ros-envs
+  environment:
+  - FASTRTPS_DEFAULT_PROFILES_FILE=/shm-only.xml
+  - USER=${USER:-root}
 
 services:
 
+  ros2router:
+    image: husarnet/ros2router:1.6.3
+    <<: *common-config
+    # volumes:
+    #   - ./filter.yaml:/filter.yaml
+    environment:
+      - USER
+      # ==========================
+      # envs for Husarnet setup
+      # ==========================
+      - DISCOVERY_SERVER_LISTENING_PORT=11811
+      - DISCOVERY_SERVER_ID=0
+      # ==========================
+      # envs for LAN setup
+      # ==========================
+      # - ROS_LOCALHOST_ONLY=0
+      # - HUSARNET_PARTICIPANT_ENABLED=false
+    # entrypoint: tail -f /dev/null
+
   rosbot-xl:
     image: husarion/rosbot-xl:humble-0.8.12-20240115
-    <<: *net-config
+    <<:
+      - *common-config
+      - *ros-envs
     command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
 
   microros:
-    image: husarion/micro-xrce-agent:v2.4.1
-    <<: *net-config
-    command: MicroXRCEAgent udp4 --port 8888
+    image: husarion/micro-ros-agent:humble-entrypoint
+    <<:
+      - *common-config
+      - *ros-envs
+    # ports:
+    #   - 192.168.77.2:8888:8888/udp
+    command: ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
 
   rplidar:
-    image: husarion/rplidar:humble
-    <<: *net-config
+    image: husarion/rplidar:humble-1.0.1-20240104
+    <<:
+      - *common-config
+      - *ros-envs
     devices:
       - /dev/ttyRPLIDAR:/dev/ttyUSB0
-    command: ros2 launch sllidar_ros2 sllidar_launch.py serial_baudrate:=${LIDAR_BAUDRATE:-115200}
+    command: >
+      ros2 launch /husarion_utils/rplidar.launch.py
+        serial_baudrate:=${LIDAR_BAUDRATE:-256000}
+        serial_port:=/dev/ttyUSB0
 
   navigation:
     image: husarion/navigation2:humble-namespace
     <<:
-      - *net-config
-    # depends_on:
-    #   rplidar: { condition: service_healthy }
-    #   rosbot: { condition: service_healthy }
+      - *common-config
+      - *ros-envs
+    depends_on:
+      rplidar: { condition: service_healthy }
+    #   rosbot-xl: { condition: service_healthy }
     volumes:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
@@ -39,30 +76,3 @@ services:
         params_file:=/params.yaml
         map:=/maps/map.yaml
         use_sim_time:=False
-
-  foxglove:
-    image: husarion/foxglove:1.83.0
-    ports:
-      - 8080:8080
-      - 8765:8765
-    volumes:
-      - ./config/layout.json:/foxglove/default-layout.json
-    environment:
-      # - DS_TYPE=rosbridge-websocket
-      # - DS_PORT=9090
-      - DS_TYPE=foxglove-websocket
-      - DS_PORT=8765
-      - DS_HOST=foxglove-ds
-      - UI_PORT=8080
-      - DISABLE_CACHE=true
-      - DISABLE_INTERACTION=false
-
-  # rosbridge-ds:
-  #   image: husarion/rosbridge-server:humble-1.3.1-20230831-stable
-  #   ports:
-  #     - 9090:9090
-  #   command: ros2 launch rosbridge_server rosbridge_websocket_launch.xml
-
-  foxglove-ds:
-    image: husarion/foxglove-bridge:humble-0.7.3-20231222
-    command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765 capabilities:=[clientPublish,connectionGraph,assets]
