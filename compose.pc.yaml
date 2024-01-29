@@ -22,8 +22,7 @@ services:
       # ==========================
       # envs for Husarnet setup
       # ==========================
-      # - ROS_DISCOVERY_SERVER=${ROBOT_NAMESPACE}:11811
-      - ROS_DISCOVERY_SERVER=rosbot-xl:11811
+      - ROS_DISCOVERY_SERVER=${ROBOT_NAMESPACE}:11811
       - DISCOVERY_SERVER_ID=10 # need to be different as ros2router on ROSbot
       # ==========================
       # envs for LAN setup

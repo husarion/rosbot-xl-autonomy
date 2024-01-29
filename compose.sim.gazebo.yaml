@@ -8,13 +8,6 @@ x-gpu-config:
 
 services:
 
-  rviz:
-    image: husarion/rviz2:humble-11.2.6-20230809
-    <<: *gpu-config
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ./config/rosbot.rviz:/root/.rviz2/default.rviz
-
   rosbot-xl:
     image: husarion/rosbot-xl-gazebo:humble-0.8.2-20230712
     <<: *gpu-config
@@ -36,3 +29,11 @@ services:
         params_file:=/params.yaml
         map:=/maps/map.yaml
         use_sim_time:=True
+        
+  rviz:
+    image: husarion/rviz2:humble-11.2.6-20230809
+    <<: *gpu-config
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./config/rosbot.rviz:/root/.rviz2/default.rviz
+
