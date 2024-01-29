@@ -67,7 +67,7 @@ services:
       - *dds-envs
     depends_on:
       rplidar: { condition: service_healthy }
-    #   rosbot-xl: { condition: service_healthy }
+      # rosbot: { condition: service_healthy }
     volumes:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
