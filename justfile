@@ -102,6 +102,12 @@ start-pc:
     xhost +local:docker
     docker compose -f compose.pc.yaml up
 
+# start the Gazebo simulation
+start-gazebo:
+    #!/bin/bash
+    xhost +local:docker
+    docker compose -f compose.sim.gazebo.yaml up
+
 # run teleop_twist_keybaord (host)
 run-teleop:
     #!/bin/bash
