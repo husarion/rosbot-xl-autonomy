@@ -139,7 +139,7 @@ just start-simulation gazebo
 To start Webots simulation run:
 
 ```bash
-just start-simulation gazebo
+just start-simulation webots
 # or "just webots"
 ```
 
