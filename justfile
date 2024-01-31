@@ -24,6 +24,68 @@ pre-commit:
     fi
     pre-commit run -a
 
+# connect to Husarnet VPN network
+connect-husarnet joincode hostname: _run-as-root
+    #!/bin/bash
+    if ! command -v husarnet > /dev/null; then
+        echo "Husarnet is not installed. Installing now..."
+        curl https://install.husarnet.com/install.sh | bash
+    fi
+    husarnet join {{joincode}} {{hostname}}
+
+# Copy repo content to remote host with 'rsync' and watch for changes
+sync hostname="${ROBOT_NAMESPACE}" password="husarion": _install-rsync _run-as-user
+    #!/bin/bash
+    mkdir -m 775 -p maps
+    sshpass -p "{{password}}" rsync -vRr --exclude='.git/' --exclude='maps/' --delete ./ husarion@{{hostname}}:/home/husarion/${PWD##*/}
+    while inotifywait -r -e modify,create,delete,move ./ --exclude='.git/' --exclude='maps/' ; do
+        sshpass -p "{{password}}" rsync -vRr --exclude='.git/' --exclude='maps/' --delete ./ husarion@{{hostname}}:/home/husarion/${PWD##*/}
+    done
+
+# flash the proper firmware for STM32 microcontroller in ROSbot XL
+flash-firmware: _install-yq _run-as-user
+    #!/bin/bash
+    echo "Stopping all running containers"
+    docker ps -q | xargs -r docker stop
+
+    echo "Flashing the firmware for STM32 microcontroller in ROSbot"
+    docker run \
+        --rm -it \
+        --device /dev/ttyUSBDB \
+        --device /dev/bus/usb/ \
+        $(yq .services.rosbot.image compose.yaml) \
+        flash-firmware.py -p /dev/ttyUSBDB # todo
+        # ros2 run rosbot_utils flash_firmware
+
+# start containers on a physical ROSbot XL
+start-rosbot: _run-as-user
+    #!/bin/bash
+    mkdir -m 775 -p maps
+    docker compose down
+    docker compose pull
+    docker compose up
+
+# start the Gazebo simulation
+start-gazebo-sim: _run-as-user
+    #!/bin/bash
+    xhost +local:docker
+    docker compose -f compose.sim.gazebo.yaml down
+    docker compose -f compose.sim.gazebo.yaml pull
+    docker compose -f compose.sim.gazebo.yaml up
+
+# start the Webots simulation
+start-webots-sim: _run-as-user
+    #!/bin/bash
+    xhost +local:docker
+    docker compose -f compose.sim.webots.yaml down
+    docker compose -f compose.sim.webots.yaml pull
+    docker compose -f compose.sim.webots.yaml up
+
+# Restart the Nav2 container
+restart-navigation: _run-as-user
+    #!/bin/bash
+    docker compose down navigation
+    docker compose up -d navigation
 
 _run-as-root:
     #!/bin/bash
@@ -72,66 +134,3 @@ _install-yq:
         chmod +x /usr/bin/yq
         echo "yq installed successfully!"
     fi
-
-# connect to Husarnet VPN network
-connect-husarnet joincode hostname: _run-as-root
-    #!/bin/bash
-    if ! command -v husarnet > /dev/null; then
-        echo "Husarnet is not installed. Installing now..."
-        curl https://install.husarnet.com/install.sh | bash
-    fi
-    husarnet join {{joincode}} {{hostname}}
-
-# flash the proper firmware for STM32 microcontroller in ROSbot XL
-flash-firmware: _install-yq _run-as-user
-    #!/bin/bash
-    echo "Stopping all running containers"
-    docker ps -q | xargs -r docker stop
-
-    echo "Flashing the firmware for STM32 microcontroller in ROSbot"
-    docker run \
-        --rm -it \
-        --device /dev/ttyUSBDB \
-        --device /dev/bus/usb/ \
-        $(yq .services.rosbot.image compose.yaml) \
-        flash-firmware.py -p /dev/ttyUSBDB # todo
-        # ros2 run rosbot_utils flash_firmware
-
-# start containers on a physical ROSbot XL
-start-rosbot: _run-as-user
-    #!/bin/bash
-    mkdir -m 775 -p maps
-    docker compose down
-    docker compose pull
-    docker compose up
-
-# start the Gazebo simulation
-start-gazebo-sim: _run-as-user
-    #!/bin/bash
-    xhost +local:docker
-    docker compose -f compose.sim.gazebo.yaml down
-    docker compose -f compose.sim.gazebo.yaml pull
-    docker compose -f compose.sim.gazebo.yaml up
-
-# start the Webots simulation
-start-webots-sim: _run-as-user
-    #!/bin/bash
-    xhost +local:docker
-    docker compose -f compose.sim.webots.yaml down
-    docker compose -f compose.sim.webots.yaml pull
-    docker compose -f compose.sim.webots.yaml up
-
-# Restart the Nav2 container
-restart-navigation: _run-as-user
-    #!/bin/bash
-    docker compose down navigation
-    docker compose up -d navigation
-
-# Copy repo content to remote host with 'rsync' and watch for changes
-sync hostname="${ROBOT_NAMESPACE}" password="husarion": _install-rsync _run-as-user
-    #!/bin/bash
-    mkdir -m 775 -p maps
-    sshpass -p "{{password}}" rsync -vRr --exclude='.git/' --exclude='maps/' --delete ./ husarion@{{hostname}}:/home/husarion/${PWD##*/}
-    while inotifywait -r -e modify,create,delete,move ./ --exclude='.git/' --exclude='maps/' ; do
-        sshpass -p "{{password}}" rsync -vRr --exclude='.git/' --exclude='maps/' --delete ./ husarion@{{hostname}}:/home/husarion/${PWD##*/}
-    done

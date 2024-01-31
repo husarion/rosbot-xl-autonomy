@@ -6,25 +6,23 @@ x-gpu-config:
     - NVIDIA_VISIBLE_DEVICES=all
     - NVIDIA_DRIVER_CAPABILITIES=all
 
+x-cpu-config:
+  &cpu-config
+  environment:
+    - DISPLAY=${DISPLAY:?err}
+    - LIBGL_ALWAYS_SOFTWARE=1
+
 services:
 
-  rviz:
-    image: husarion/rviz2:humble-11.2.6-20230809
-    <<: *gpu-config
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ./config/rosbot.rviz:/root/.rviz2/default.rviz
-
-  rosbot-xl:
-    image: husarion/rosbot-xl-gazebo:humble-0.8.2-20230712
-    <<: *gpu-config
+  rosbot:
+    image: husarion/rosbot-xl-gazebo:humble-0.9.1-20240131
+    <<: *gpu-config # or *cpu-config
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command: ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}
 
   navigation:
-    image: husarion/navigation2:humble-arm64-from-sourece
-    <<: *gpu-config
+    image: husarion/navigation2:humble-1.1.12-20240123
     volumes:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
@@ -36,3 +34,22 @@ services:
         params_file:=/params.yaml
         map:=/maps/map.yaml
         use_sim_time:=True
+
+  foxglove:
+    image: husarion/foxglove:1.84.0
+    ports:
+      - 8080:8080
+      - 8765:8765
+    volumes:
+      - ./config/layout.json:/foxglove/default-layout.json
+    environment:
+      - DS_TYPE=foxglove-websocket
+      - DS_PORT=8765
+      - DS_HOST=foxglove-ds
+      - UI_PORT=8080
+      - DISABLE_CACHE=true
+      - DISABLE_INTERACTION=false
+
+  foxglove-ds:
+    image: husarion/foxglove-bridge:humble-0.7.3-20240108
+    command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765 capabilities:=[clientPublish,connectionGraph,assets]

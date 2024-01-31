@@ -27,9 +27,9 @@
       },
       "cameraState": {
         "perspective": true,
-        "distance": 5,
-        "phi": 45,
-        "thetaOffset": 90,
+        "distance": 4.999999999999994,
+        "phi": 45.581113801452794,
+        "thetaOffset": 90.00000000000004,
         "targetOffset": [
           1.5,
           0,
@@ -63,7 +63,7 @@
       },
       "transforms": {
         "frame:map": {
-          "visible": false
+          "visible": true
         },
         "frame:rosbot/base_link/camera_orbbec_astra_camera": {
           "visible": false
@@ -75,7 +75,7 @@
           "visible": false
         },
         "frame:base_link": {
-          "visible": false
+          "visible": true
         },
         "frame:fl_range": {
           "visible": false
@@ -129,6 +129,45 @@
           "visible": false
         },
         "frame:odom": {
+          "visible": false
+        },
+        "frame:antenna_connector_link": {
+          "visible": false
+        },
+        "frame:antenna_link": {
+          "visible": false
+        },
+        "frame:camera_mount_bot_link": {
+          "visible": false
+        },
+        "frame:camera_mount_mid_link": {
+          "visible": false
+        },
+        "frame:camera_mount_top_link": {
+          "visible": false
+        },
+        "frame:camera_mount_link": {
+          "visible": false
+        },
+        "frame:camera_bottom_screw_frame": {
+          "visible": false
+        },
+        "frame:rosbot_xl/base_link/camera_intel_realsense_d435_depth": {
+          "visible": false
+        },
+        "frame:camera_infra1_frame": {
+          "visible": false
+        },
+        "frame:camera_infra1_optical_frame": {
+          "visible": false
+        },
+        "frame:camera_infra2_frame": {
+          "visible": false
+        },
+        "frame:camera_infra2_optical_frame": {
+          "visible": false
+        },
+        "frame:slamtec_rplidar_s3_link": {
           "visible": false
         }
       },
@@ -253,7 +292,7 @@
     },
     "Teleop!43h55pp": {
       "topic": "/cmd_vel",
-      "publishRate": 1,
+      "publishRate": 10,
       "upButton": {
         "field": "linear-x",
         "value": 0.3
