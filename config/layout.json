@@ -113,6 +113,9 @@
         "frame:slamtec_rplidar_a2_link": {
           "visible": false
         },
+        "frame:slamtec_rplidar_s1_link": {
+          "visible": false
+        },
         "frame:laser": {
           "visible": false
         },
