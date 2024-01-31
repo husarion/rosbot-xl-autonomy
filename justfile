@@ -24,6 +24,21 @@ pre-commit:
     fi
     pre-commit run -a
 
+
+_run-as-root:
+    #!/bin/bash
+    if [ "$EUID" -ne 0 ]; then
+        echo -e "\e[1;33mPlease re-run as root user to install dependencies\e[0m"
+        exit 1
+    fi
+
+_run-as-user:
+    #!/bin/bash
+    if [ "$EUID" -eq 0 ]; then
+        echo -e "\e[1;33mPlease re-run as non-root user\e[0m"
+        exit 1
+    fi
+
 _install-rsync:
     #!/bin/bash
     if ! command -v rsync &> /dev/null || ! command -v sshpass &> /dev/null || ! command -v inotifywait &> /dev/null; then
@@ -31,7 +46,7 @@ _install-rsync:
             echo -e "\e[1;33mPlease run as root to install dependencies\e[0m"
             exit 1
         fi
-        sudo apt-get install -y rsync sshpass inotify-tools
+        apt install -y rsync sshpass inotify-tools
     fi
 
 _install-yq:
@@ -59,39 +74,31 @@ _install-yq:
     fi
 
 # connect to Husarnet VPN network
-connect-husarnet joincode hostname:
+connect-husarnet joincode hostname: _run-as-root
     #!/bin/bash
-    if [ "$EUID" -ne 0 ]; then
-        echo "Please run as root"
-        exit
-    fi
     if ! command -v husarnet > /dev/null; then
         echo "Husarnet is not installed. Installing now..."
-        curl https://install.husarnet.com/install.sh | sudo bash
+        curl https://install.husarnet.com/install.sh | bash
     fi
     husarnet join {{joincode}} {{hostname}}
 
-# flash the proper firmware for STM32 microcontroller in ROSbot 2R / 2 PRO
-flash-firmware: _install-yq
+# flash the proper firmware for STM32 microcontroller in ROSbot XL
+flash-firmware: _install-yq _run-as-user
     #!/bin/bash
-    if [ "$EUID" -ne 0 ]; then
-        echo "Stopping all running containers"
-        docker ps -q | xargs -r docker stop
+    echo "Stopping all running containers"
+    docker ps -q | xargs -r docker stop
 
-        echo "Flashing the firmware for STM32 microcontroller in ROSbot"
-        docker run \
-            --rm -it \
-            --device /dev/ttyUSBDB \
-            --device /dev/bus/usb/ \
-            $(yq .services.rosbot.image compose.yaml) \
-            flash-firmware.py -p /dev/ttyUSBDB # todo
-            # ros2 run rosbot_utils flash_firmware
-    else
-        echo "Please run \"just flash-firmware\" as non-root user"
-    fi
+    echo "Flashing the firmware for STM32 microcontroller in ROSbot"
+    docker run \
+        --rm -it \
+        --device /dev/ttyUSBDB \
+        --device /dev/bus/usb/ \
+        $(yq .services.rosbot.image compose.yaml) \
+        flash-firmware.py -p /dev/ttyUSBDB # todo
+        # ros2 run rosbot_utils flash_firmware
 
-# start ROSbot 2R / 2 PRO autonomy containers
-start-rosbot:
+# start containers on a physical ROSbot XL
+start-rosbot: _run-as-user
     #!/bin/bash
     mkdir -m 775 -p maps
     docker compose down
@@ -99,7 +106,7 @@ start-rosbot:
     docker compose up
 
 # start the Gazebo simulation
-start-gazebo-sim:
+start-gazebo-sim: _run-as-user
     #!/bin/bash
     xhost +local:docker
     docker compose -f compose.sim.gazebo.yaml down
@@ -107,7 +114,7 @@ start-gazebo-sim:
     docker compose -f compose.sim.gazebo.yaml up
 
 # start the Webots simulation
-start-webots-sim:
+start-webots-sim: _run-as-user
     #!/bin/bash
     xhost +local:docker
     docker compose -f compose.sim.webots.yaml down
@@ -115,13 +122,13 @@ start-webots-sim:
     docker compose -f compose.sim.webots.yaml up
 
 # Restart the Nav2 container
-restart-navigation:
+restart-navigation: _run-as-user
     #!/bin/bash
     docker compose down navigation
     docker compose up -d navigation
 
 # Copy repo content to remote host with 'rsync' and watch for changes
-sync hostname="${ROBOT_NAMESPACE}" password="husarion": _install-rsync
+sync hostname="${ROBOT_NAMESPACE}" password="husarion": _install-rsync _run-as-user
     #!/bin/bash
     mkdir -m 775 -p maps
     sshpass -p "{{password}}" rsync -vRr --exclude='.git/' --exclude='maps/' --delete ./ husarion@{{hostname}}:/home/husarion/${PWD##*/}
