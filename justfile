@@ -1,19 +1,21 @@
 set dotenv-load
 
 [private]
+default:
+    @just --list --unsorted
+
+[private]
 alias husarnet := connect-husarnet
 [private]
 alias flash := flash-firmware
 [private]
 alias rosbot := start-rosbot
-[private]
-alias gazebo := start-gazebo-sim
-[private]
-alias webots := start-webots-sim
 
 [private]
-default:
-    @just --list --unsorted
+gazebo: (start-simulation "gazebo")
+
+[private]
+webots: (start-simulation "webots")
 
 [private]
 pre-commit:
@@ -65,21 +67,23 @@ start-rosbot: _run-as-user
     docker compose pull
     docker compose up
 
-# start the Gazebo simulation
-start-gazebo-sim: _run-as-user
+# start the simulation (available options: gazebo, webots)
+start-simulation engine="gazebo": _run-as-user
     #!/bin/bash
     xhost +local:docker
-    docker compose -f compose.sim.gazebo.yaml down
-    docker compose -f compose.sim.gazebo.yaml pull
-    docker compose -f compose.sim.gazebo.yaml up
-
-# start the Webots simulation
-start-webots-sim: _run-as-user
-    #!/bin/bash
-    xhost +local:docker
-    docker compose -f compose.sim.webots.yaml down
-    docker compose -f compose.sim.webots.yaml pull
-    docker compose -f compose.sim.webots.yaml up
+    if [[ "{{engine}}" == "gazebo" ]]; then
+        export SIMULATION_DOCKER_IMAGE="husarion/rosbot-xl-gazebo:humble-0.9.1-20240131"
+        export SIMULATION_COMMAND="ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}"
+    elif [[ "{{engine}}" == "webots" ]]; then
+        export SIMULATION_DOCKER_IMAGE="husarion/webots:humble-2023.0.4-20230809-stable"
+        export SIMULATION_COMMAND="ros2 launch webots_ros2_husarion rosbot_xl_launch.py"
+    else
+        echo -e "\e[1;33mUnknown ROS 2 simulation engine: {{engine}}\e[0m"
+        exit 1
+    fi
+    docker compose -f compose.simulation.yaml down
+    docker compose -f compose.simulation.yaml pull
+    docker compose -f compose.simulation.yaml up
 
 # Restart the Nav2 container
 restart-navigation: _run-as-user

@@ -15,11 +15,11 @@ x-cpu-config:
 services:
 
   rosbot:
-    image: husarion/rosbot-xl-gazebo:humble-0.9.1-20240131
+    image: ${SIMULATION_DOCKER_IMAGE:-husarion/rosbot-xl-gazebo:humble-0.9.1-20240131}
     <<: *gpu-config # or *cpu-config
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-    command: ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}
+    command: ${SIMULATION_COMMAND:-ros2 launch rosbot_xl_gazebo simulation.launch.py mecanum:=${MECANUM:-True}}
 
   navigation:
     image: husarion/navigation2:humble-1.1.12-20240123
