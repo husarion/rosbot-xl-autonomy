@@ -2,20 +2,16 @@ x-common-config:
   &common-config
   network_mode: host
   ipc: host
+  restart: unless-stopped
 
-x-cpu-config:
-  &cpu-config
-  env_file: .env.cpu
-
-x-gpu-config:
-  &gpu-config
-  runtime: nvidia
-  env_file: .env.gpu
+x-dds-envs:
+  &dds-envs
+  env_file: .env.dds
 
 services:
 
   ros2router:
-    image: husarnet/ros2router:1.6.3
+    image: husarnet/ros2router:1.7.0
     <<: *common-config
     environment:
       - USER
@@ -31,15 +27,18 @@ services:
       # - HUSARNET_PARTICIPANT_ENABLED=false
 
   rviz:
-    image: husarion/rviz2:iron-12.4.5-20240104
+    image: husarion/rviz2:humble-11.2.9-20240111
+    runtime: ${DOCKER_RUNTIME:-runc}
     <<:
       - *common-config
-      - *cpu-config
+      - *dds-envs
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./config/rosbot.rviz:/default.rviz
     environment:
-      - FASTRTPS_DEFAULT_PROFILES_FILE=/shm-only.xml
-      - USER
+      - DISPLAY=${DISPLAY:?err}
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-1}
+      - NVIDIA_VISIBLE_DEVICES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
+      - NVIDIA_DRIVER_CAPABILITIES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
     command: >
       rviz2 -d /default.rviz

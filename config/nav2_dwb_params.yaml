@@ -1,8 +1,4 @@
-re Pursuit
-# - mppi - Model Prere Pursuit
-# - mppi - Model Prere Pursuit
-# - mppi - Model Prere Pursuit
-# - mppi - Model Pre---
+---
 amcl:
   ros__parameters:
     use_sim_time: false

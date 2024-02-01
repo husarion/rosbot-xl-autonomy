@@ -11,7 +11,7 @@ x-dds-envs:
 services:
 
   ros2router:
-    image: husarnet/ros2router:1.6.3
+    image: husarnet/ros2router:1.7.0
     <<: *common-config
     # volumes:
     #   - ./filter.yaml:/filter.yaml
@@ -33,10 +33,10 @@ services:
     <<:
       - *common-config
       - *dds-envs
-    healthcheck:
-      disable: true
-    volumes:
-      - ./ros_entrypoint.sh:/ros_entrypoint.sh
+    # healthcheck:
+    #   disable: true
+    # volumes:
+    #   - ./ros_entrypoint.sh:/ros_entrypoint.sh
     command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
 
   microros:
@@ -67,7 +67,7 @@ services:
       - *dds-envs
     depends_on:
       rplidar: { condition: service_healthy }
-      # rosbot: { condition: service_healthy }
+      rosbot: { condition: service_healthy }
     volumes:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
