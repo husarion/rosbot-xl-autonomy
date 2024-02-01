@@ -20,13 +20,13 @@ services:
       # ==========================
       # envs for Husarnet setup
       # ==========================
-      - DISCOVERY_SERVER_LISTENING_PORT=11811
-      - DISCOVERY_SERVER_ID=0
+      # - DISCOVERY_SERVER_LISTENING_PORT=11811
+      # - DISCOVERY_SERVER_ID=0
       # ==========================
       # envs for LAN setup
       # ==========================
-      # - ROS_LOCALHOST_ONLY=0
-      # - HUSARNET_PARTICIPANT_ENABLED=false
+      - ROS_LOCALHOST_ONLY=0
+      - HUSARNET_PARTICIPANT_ENABLED=false
 
   rosbot:
     image: husarion/rosbot-xl:humble-0.8.12-20240115
@@ -35,8 +35,8 @@ services:
       - *dds-envs
     # healthcheck:
     #   disable: true
-    # volumes:
-    #   - ./ros_entrypoint.sh:/ros_entrypoint.sh
+    volumes:
+      - ./ros_entrypoint.sh:/ros_entrypoint.sh
     command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
 
   microros:

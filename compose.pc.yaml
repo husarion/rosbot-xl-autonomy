@@ -18,13 +18,13 @@ services:
       # ==========================
       # envs for Husarnet setup
       # ==========================
-      - ROS_DISCOVERY_SERVER=${ROBOT_NAMESPACE}:11811
-      - DISCOVERY_SERVER_ID=10 # need to be different as ros2router on ROSbot
+      # - ROS_DISCOVERY_SERVER=${ROBOT_NAMESPACE}:11811
+      # - DISCOVERY_SERVER_ID=10 # need to be different as ros2router on ROSbot
       # ==========================
       # envs for LAN setup
       # ==========================
-      # - ROS_LOCALHOST_ONLY=0
-      # - HUSARNET_PARTICIPANT_ENABLED=false
+      - ROS_LOCALHOST_ONLY=0
+      - HUSARNET_PARTICIPANT_ENABLED=false
 
   rviz:
     image: husarion/rviz2:humble-11.2.9-20240111

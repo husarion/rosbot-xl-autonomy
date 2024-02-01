@@ -24,7 +24,7 @@ services:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
     environment:
-      - SAVE_MAP_PERIOD=${SAVE_MAP_PERIOD}
+      - SAVE_MAP_PERIOD
     command: >
       ros2 launch nav2_bringup bringup_launch.py
         slam:=${SLAM:-True}
