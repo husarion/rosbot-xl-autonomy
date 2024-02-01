@@ -15,7 +15,7 @@ export ROSBOT_ADDR=10.5.10.123 # Replace with your own ROSbot's IP or Husarnet h
 
 ## Flashing the ROSbot's Firmware
 
-To flash the Micro-ROS based firmware for STM32F4 microcontroller responisble for low-level functionalities of ROSbot XL, execute in the ROSbot's shell:
+To flash the Micro-ROS based firmware for STM32F4 microcontroller responsible for low-level functionalities of ROSbot XL, execute in the ROSbot's shell:
 
 ```bash
 docker stop rosbot-xl microros 2>/dev/null || true && \
