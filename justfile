@@ -62,8 +62,8 @@ flash-firmware: _install-yq _run-as-user
         --device /dev/ttyUSBDB \
         --device /dev/bus/usb/ \
         $(yq .services.rosbot.image compose.yaml) \
-        flash-firmware.py -p /dev/ttyUSBDB # todo
-        # ros2 run rosbot_utils flash_firmware
+        ros2 run rosbot_xl_utils flash_firmware --port /dev/ttyUSBDB
+        # flash-firmware.py -p /dev/ttyUSBDB # todo
 
 # start containers on a physical ROSbot XL
 start-rosbot: _run-as-user

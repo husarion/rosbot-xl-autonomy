@@ -11,7 +11,7 @@ x-dds-envs:
 services:
 
   ros2router:
-    image: husarnet/ros2router:1.7.0
+    image: husarnet/ros2router:1.6.3 #1.7.0
     <<: *common-config
     # volumes:
     #   - ./filter.yaml:/filter.yaml
@@ -20,33 +20,23 @@ services:
       # ==========================
       # envs for Husarnet setup
       # ==========================
-      # - DISCOVERY_SERVER_LISTENING_PORT=11811
-      # - DISCOVERY_SERVER_ID=0
+      - DISCOVERY_SERVER_LISTENING_PORT=11811
+      - DISCOVERY_SERVER_ID=0
       # ==========================
       # envs for LAN setup
       # ==========================
-      - ROS_LOCALHOST_ONLY=0
-      - HUSARNET_PARTICIPANT_ENABLED=false
+      # - ROS_LOCALHOST_ONLY=0
+      # - HUSARNET_PARTICIPANT_ENABLED=false
 
   rosbot:
-    image: husarion/rosbot-xl:humble-0.8.12-20240115
+    image: husarion/rosbot-xl:humble-simplify
     <<:
       - *common-config
       - *dds-envs
-    # healthcheck:
-    #   disable: true
-    volumes:
-      - ./ros_entrypoint.sh:/ros_entrypoint.sh
-    command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
-
-  microros:
-    image: husarion/micro-ros-agent:humble-3.1.3-20240126
-    <<:
-      - *common-config
-      - *dds-envs
-    # ports:
-    #   - 192.168.77.2:8888:8888/udp
-    command: ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
+    devices:
+      - /dev/ttyUSBDB # just for firmware flashing
+      - /dev/bus/usb/ # just for firmware flashing
+    command: ros2 launch rosbot_xl_bringup combined.launch.py mecanum:=${MECANUM:-True} # namespace:=rosbocik
 
   rplidar:
     image: husarion/rplidar:humble-1.0.1-20240104
