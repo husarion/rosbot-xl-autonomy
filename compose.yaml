@@ -1,7 +1,7 @@
 services:
 
   rosbot:
-    image: husarion/rosbot-xl:humble-0.8.12-20240115
+    image: husarion/rosbot-xl:humble-0.10.0-20240202
     restart: unless-stopped
     command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
 
