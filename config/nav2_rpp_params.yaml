@@ -334,7 +334,7 @@ planner_server_rclcpp_node:
   ros__parameters:
     use_sim_time: false
 
-slam_toolbox:
+<robot_namespace>/slam_toolbox:
   ros__parameters:
 
     # Plugin params

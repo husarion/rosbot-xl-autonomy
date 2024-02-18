@@ -3,112 +3,112 @@
 # durability: true - transient local, false - volatile
 allowlist:
 
-  - name: rt/amcl_pose
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/amcl_pose
     type: geometry_msgs::msg::dds_::PoseWithCovarianceStamped_
 
-  - name: rt/cmd_vel
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/cmd_vel
     type: geometry_msgs::msg::dds_::Twist_
 
-  - name: rt/cmd_vel_teleop
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/cmd_vel_teleop
     type: geometry_msgs::msg::dds_::Twist_
 
-  - name: rt/global_costmap/costmap
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/global_costmap/costmap
     type: nav_msgs::msg::dds_::OccupancyGrid_
 
-  - name: rt/global_costmap/costmap_raw
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/global_costmap/costmap_raw
     type: nav2_msgs::msg::dds_::Costmap_
 
-  - name: rt/global_costmap/costmap_updates
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/global_costmap/costmap_updates
     type: map_msgs::msg::dds_::OccupancyGridUpdate_
 
-  - name: rt/global_costmap/footprint
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/global_costmap/footprint
     type: geometry_msgs::msg::dds_::Polygon_
 
-  - name: rt/global_costmap/published_footprint
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/global_costmap/published_footprint
     type: geometry_msgs::msg::dds_::PolygonStamped_
 
-  - name: rt/goal_pose
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/goal_pose
     type: geometry_msgs::msg::dds_::PoseStamped_
 
-  - name: rt/imu_broadcaster/imu
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/imu_broadcaster/imu
     type: sensor_msgs::msg::dds_::Imu_
 
-  - name: rt/local_costmap/costmap
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/local_costmap/costmap
     type: nav_msgs::msg::dds_::OccupancyGrid_
 
-  - name: rt/local_costmap/costmap_raw
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/local_costmap/costmap_raw
     type: nav2_msgs::msg::dds_::Costmap_
 
-  - name: rt/local_costmap/costmap_updates
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/local_costmap/costmap_updates
     type: map_msgs::msg::dds_::OccupancyGridUpdate_
 
-  - name: rt/local_costmap/footprint
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/local_costmap/footprint
     type: geometry_msgs::msg::dds_::Polygon_
 
-  - name: rt/local_costmap/published_footprint
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/local_costmap/published_footprint
     type: geometry_msgs::msg::dds_::PolygonStamped_
 
-  - name: rt/lookahead_collision_arc
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/lookahead_collision_arc
     type: nav_msgs::msg::dds_::Path_
 
-  - name: rt/lookahead_point
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/lookahead_point
     type: geometry_msgs::msg::dds_::PointStamped_
 
-  - name: rt/map
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/map
     type: nav_msgs::msg::dds_::OccupancyGrid_
 
-  - name: rt/map_updates
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/map_updates
     type: map_msgs::msg::dds_::OccupancyGridUpdate_
 
-  - name: rt/marker
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/marker
     type: visualization_msgs::msg::dds_::MarkerArray_
 
-  - name: rt/odometry/filtered
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/odometry/filtered
     type: nav_msgs::msg::dds_::Odometry_
 
-  - name: rt/particle_cloud
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/particle_cloud
     type: nav2_msgs::msg::dds_::ParticleCloud_
 
-  - name: rt/plan
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/plan
     type: nav_msgs::msg::dds_::Path_
 
-  - name: rt/preempt_teleop
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/preempt_teleop
     type: std_msgs::msg::dds_::Empty_
 
-  - name: rt/received_global_plan
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/received_global_plan
     type: nav_msgs::msg::dds_::Path_
 
-  - name: rt/robot_description
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/robot_description
     type: std_msgs::msg::dds_::String_
 
-  - name: rt/rosbot_base_controller/odom
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/rosbot_base_controller/odom
     type: nav_msgs::msg::dds_::Odometry_
 
-  - name: rt/scan
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/scan
     type: sensor_msgs::msg::dds_::LaserScan_
 
-  - name: rt/set_pose
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/set_pose
     type: geometry_msgs::msg::dds_::PoseWithCovarianceStamped_
 
-  - name: rt/speed_limit
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/speed_limit
     type: nav2_msgs::msg::dds_::SpeedLimit_
 
-  - name: rt/tf
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/tf
     type: tf2_msgs::msg::dds_::TFMessage_
 
-  - name: rt/tf_static
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/tf_static
     type: tf2_msgs::msg::dds_::TFMessage_
 
-  - name: rt/trajectories
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/trajectories
     type: visualization_msgs::msg::dds_::MarkerArray_
 
-  - name: rt/unsmoothed_plan
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/unsmoothed_plan
     type: nav_msgs::msg::dds_::Path_
 
-  - name: rt/visualization_marker_array
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/visualization_marker_array
     type: visualization_msgs::msg::dds_::MarkerArray_
 
-  - name: rt/rosout
+  - name: rt/{{ .Env.ROBOT_NAMESPACE }}/rosout
     type: rcl_interfaces::msg::dds_::Log_
 
 blocklist: []

@@ -93,11 +93,11 @@ start-simulation engine="gazebo": _run-as-user
         exit 1
     fi
 
-    trap "docker compose -f compose.sim.yaml -f $SIM_ENGINE_COMPOSE down" SIGINT # Remove containers after CTRL+C
+    trap "docker compose -f $SIM_ENGINE_COMPOSE down" SIGINT # Remove containers after CTRL+C
 
-    docker compose -f compose.sim.yaml -f $SIM_ENGINE_COMPOSE down
-    docker compose -f compose.sim.yaml -f $SIM_ENGINE_COMPOSE pull
-    docker compose -f compose.sim.yaml -f $SIM_ENGINE_COMPOSE up
+    docker compose -f $SIM_ENGINE_COMPOSE down
+    docker compose -f $SIM_ENGINE_COMPOSE pull
+    docker compose -f $SIM_ENGINE_COMPOSE up
 
 # run teleop_twist_keybaord (host)
 run-teleop:

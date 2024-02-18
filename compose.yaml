@@ -11,35 +11,31 @@ x-dds-envs:
 services:
 
   ros2router:
-    image: husarnet/ros2router:1.6.3 #1.7.0
+    image: husarnet/ros2router:1.9.0
     <<: *common-config
-    # volumes:
-    #   - ./filter.yaml:/filter.yaml
+    volumes:
+      - ./filter.yaml:/filter.yaml
     environment:
       - USER
-      # ==========================
-      # envs for Husarnet setup
-      # ==========================
-      - DISCOVERY_SERVER_LISTENING_PORT=11811
-      - DISCOVERY_SERVER_ID=0
-      # ==========================
-      # envs for LAN setup
-      # ==========================
-      # - ROS_LOCALHOST_ONLY=0
-      # - HUSARNET_PARTICIPANT_ENABLED=false
-
+      - PARTICIPANTS=husarnet,shm
+      - ROBOT_NAMESPACE
+      
   rosbot:
-    image: husarion/rosbot-xl:humble-simplify
+    image: husarion/rosbot-xl:humble-0.10.0-20240216
     <<:
       - *common-config
       - *dds-envs
-    devices:
-      - /dev/ttyUSBDB # just for firmware flashing
-      - /dev/bus/usb/ # just for firmware flashing
-    command: ros2 launch rosbot_xl_bringup combined.launch.py mecanum:=${MECANUM:-True} # namespace:=rosbocik
+    # devices:
+    #   - /dev/ttyUSBDB # just for firmware flashing
+    #   - /dev/bus/usb/ # just for firmware flashing
+    command: >
+      ros2 launch /husarion_utils/rosbot.launch.py
+        mecanum:=${MECANUM:-True}
+        namespace:=${ROBOT_NAMESPACE}
+        healthcheck:=True
 
   rplidar:
-    image: husarion/rplidar:humble-1.0.1-20240104
+    image: husarion/rplidar:humble-1.0.1-20240216
     <<:
       - *common-config
       - *dds-envs
@@ -49,6 +45,8 @@ services:
       ros2 launch /husarion_utils/rplidar.launch.py
         serial_baudrate:=${LIDAR_BAUDRATE:-256000}
         serial_port:=/dev/ttyUSB0
+        robot_namespace:=${ROBOT_NAMESPACE}
+        healthcheck:=True
 
   navigation:
     image: husarion/navigation2:humble-1.1.12-20240123
@@ -63,6 +61,7 @@ services:
       - ./maps:/maps
     environment:
       - SAVE_MAP_PERIOD
+      - ROBOT_NAMESPACE
     command: >
       ros2 launch /husarion_utils/bringup_launch.py
         slam:=${SLAM:-True}

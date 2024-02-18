@@ -389,7 +389,7 @@ behavior_server:
     min_rotational_vel: 0.4
     rotational_acc_lim: 3.2
 
-slam_toolbox:
+<robot_namespace>/slam_toolbox:
   ros__parameters:
 
     # Plugin params

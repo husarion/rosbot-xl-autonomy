@@ -11,20 +11,11 @@ x-dds-envs:
 services:
 
   ros2router:
-    image: husarnet/ros2router:1.6.3 #1.7.0
+    image: husarnet/ros2router:1.9.0
     <<: *common-config
     environment:
       - USER
-      # ==========================
-      # envs for Husarnet setup
-      # ==========================
-      - ROS_DISCOVERY_SERVER=${ROBOT_NAMESPACE}:11811
-      - DISCOVERY_SERVER_ID=10 # need to be different as ros2router on ROSbot
-      # ==========================
-      # envs for LAN setup
-      # ==========================
-      # - ROS_LOCALHOST_ONLY=0
-      # - HUSARNET_PARTICIPANT_ENABLED=false
+      - PARTICIPANTS=husarnet,shm
 
   rviz:
     image: husarion/rviz2:humble-11.2.9-20240111
@@ -40,10 +31,8 @@ services:
       - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-1}
       - NVIDIA_VISIBLE_DEVICES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
       - NVIDIA_DRIVER_CAPABILITIES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
-    # command: >
-    #   rviz2 -d /default.rviz
     command: >
       rviz2 -d /default.rviz --ros-args
         -r /tf:=tf
         -r /tf_static:=tf_static
-    # -r __ns:=/${ROBOT_NAMESPACE}
+        -r __ns:=/${ROBOT_NAMESPACE}
