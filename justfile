@@ -103,13 +103,12 @@ start-simulation engine="gazebo": _run-as-user
 run-teleop:
     #!/bin/bash
     . .env.local
-    ros2 run teleop_twist_keyboard teleop_twist_keyboard
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r __ns:=/${ROBOT_NAMESPACE}
 
 # run teleop_twist_keybaord (inside rviz2 container)
 run-teleop-docker:
     #!/bin/bash
-    docker compose -f compose.pc.yaml exec rviz /bin/bash -c "/ros_entrypoint.sh ros2 run teleop_twist_keyboard teleop_twist_keyboard"
-
+    docker compose -f compose.pc.yaml exec rviz /bin/bash -c "/ros_entrypoint.sh ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r __ns:=/${ROBOT_NAMESPACE}"
 
 # Restart the Nav2 container
 restart-navigation: _run-as-user
