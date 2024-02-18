@@ -19,7 +19,7 @@ services:
       - USER
       - PARTICIPANTS=husarnet,shm
       - ROBOT_NAMESPACE
-      
+
   rosbot:
     image: husarion/rosbot-xl:humble-0.10.0-20240216
     <<:
