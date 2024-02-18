@@ -210,7 +210,7 @@ local_costmap:
       always_send_full_costmap: true
       rolling_window: true
 
-      footprint: "[[0.165, 0.145], [0.165, -0.145], [-0.165, -0.145], [-0.165, 0.145]]"
+      footprint: '[[0.165, 0.145], [0.165, -0.145], [-0.165, -0.145], [-0.165, 0.145]]'
 
       plugins: [static_layer, obstacle_layer, inflation_layer]
       static_layer:
@@ -260,7 +260,7 @@ global_costmap:
       always_send_full_costmap: true
       track_unknown_space: true # if False, treats unknown space as free space, else as unknown space
 
-      footprint: "[[0.165, 0.145], [0.165, -0.145], [-0.165, -0.145], [-0.165, 0.145]]"
+      footprint: '[[0.165, 0.145], [0.165, -0.145], [-0.165, -0.145], [-0.165, 0.145]]'
 
       plugins: [static_layer, obstacle_layer, inflation_layer]
       static_layer:
@@ -334,7 +334,7 @@ planner_server_rclcpp_node:
   ros__parameters:
     use_sim_time: false
 
-slam_toolbox:
+<robot_namespace>/slam_toolbox:
   ros__parameters:
 
     # Plugin params

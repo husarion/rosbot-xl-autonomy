@@ -2,45 +2,37 @@ x-common-config:
   &common-config
   network_mode: host
   ipc: host
+  restart: unless-stopped
 
-x-cpu-config:
-  &cpu-config
-  env_file: .env.cpu
-
-x-gpu-config:
-  &gpu-config
-  runtime: nvidia
-  env_file: .env.gpu
+x-dds-envs:
+  &dds-envs
+  env_file: .env.dds
 
 services:
 
   ros2router:
-    image: husarnet/ros2router:1.6.3
+    image: husarnet/ros2router:1.9.0
     <<: *common-config
     environment:
       - USER
-      # ==========================
-      # envs for Husarnet setup
-      # ==========================
-      # - ROS_DISCOVERY_SERVER=${ROBOT_NAMESPACE}:11811
-      - ROS_DISCOVERY_SERVER=rosbot-xl:11811
-      - DISCOVERY_SERVER_ID=10 # need to be different as ros2router on ROSbot
-      # ==========================
-      # envs for LAN setup
-      # ==========================
-      # - ROS_LOCALHOST_ONLY=0
-      # - HUSARNET_PARTICIPANT_ENABLED=false
+      - PARTICIPANTS=husarnet,shm
 
   rviz:
-    image: husarion/rviz2:iron-12.4.5-20240104
+    image: husarion/rviz2:humble-11.2.9-20240111
+    runtime: ${DOCKER_RUNTIME:-runc}
     <<:
       - *common-config
-      - *cpu-config
+      - *dds-envs
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./config/rosbot.rviz:/default.rviz
     environment:
-      - FASTRTPS_DEFAULT_PROFILES_FILE=/shm-only.xml
-      - USER
+      - DISPLAY=${DISPLAY:?err}
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-1}
+      - NVIDIA_VISIBLE_DEVICES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
+      - NVIDIA_DRIVER_CAPABILITIES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
     command: >
-      rviz2 -d /default.rviz
+      rviz2 -d /default.rviz --ros-args
+        -r /tf:=tf
+        -r /tf_static:=tf_static
+        -r __ns:=/${ROBOT_NAMESPACE}

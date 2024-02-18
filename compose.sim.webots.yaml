@@ -1,37 +1,37 @@
-x-gpu-config:
-  &gpu-config
-  runtime: nvidia
-  environment:
-    - DISPLAY=${DISPLAY:?err}
-    - NVIDIA_VISIBLE_DEVICES=all
-    - NVIDIA_DRIVER_CAPABILITIES=all
-
 services:
-
-  rviz:
-    image: husarion/rviz2:humble-11.2.6-20230809
-    <<: *gpu-config
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ./config/rosbot.rviz:/root/.rviz2/default.rviz
-
-  rosbot-xl:
+  rosbot:
     image: husarion/webots:humble-2023.0.4-20230809-stable
-    <<: *gpu-config
+    runtime: ${DOCKER_RUNTIME:-runc}
+    environment:
+      - DISPLAY=${DISPLAY:?err}
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-1}
+      - NVIDIA_VISIBLE_DEVICES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
+      - NVIDIA_DRIVER_CAPABILITIES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command: ros2 launch webots_ros2_husarion rosbot_xl_launch.py
 
-  navigation:
-    image: husarion/navigation2:humble-arm64-from-sourece
-    <<: *gpu-config
+  rviz:
+    image: husarion/rviz2:humble-11.2.9-20240111
+    runtime: ${DOCKER_RUNTIME:-runc}
+    environment:
+      - DISPLAY=${DISPLAY:?err}
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-1}
+      - NVIDIA_VISIBLE_DEVICES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
+      - NVIDIA_DRIVER_CAPABILITIES=all # if LIBGL_ALWAYS_SOFTWARE=1 this env var is ignored
     volumes:
-      - ./config/nav2_${CONTROLLER:-rpp}_webots_params.yaml:/params.yaml
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./config/rosbot.rviz:/root/.rviz2/default.rviz
+
+  navigation:
+    image: husarion/navigation2:humble-1.1.12-20240123
+    volumes:
+      - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
     environment:
-      - SAVE_MAP_PERIOD=${SAVE_MAP_PERIOD}
+      - SAVE_MAP_PERIOD
     command: >
-      ros2 launch nav2_bringup bringup_launch.py
+      ros2 launch /husarion_utils/bringup_launch.py
         slam:=${SLAM:-True}
         params_file:=/params.yaml
         map:=/maps/map.yaml

@@ -1,8 +1,4 @@
-re Pursuit
-# - mppi - Model Prere Pursuit
-# - mppi - Model Prere Pursuit
-# - mppi - Model Prere Pursuit
-# - mppi - Model Pre---
+---
 amcl:
   ros__parameters:
     use_sim_time: false
@@ -326,7 +322,7 @@ planner_server:
         tolerance: 1.0e-6
 
 
-slam_toolbox:
+<robot_namespace>/slam_toolbox:
   ros__parameters:
 
     # Plugin params

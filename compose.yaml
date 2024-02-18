@@ -2,74 +2,66 @@ x-common-config:
   &common-config
   network_mode: host
   ipc: host
-  env_file: .env
+  restart: unless-stopped
 
-x-ros-envs:
-  &ros-envs
-  environment:
-  - FASTRTPS_DEFAULT_PROFILES_FILE=/shm-only.xml
-  - USER=${USER:-root}
+x-dds-envs:
+  &dds-envs
+  env_file: .env.dds
 
 services:
 
   ros2router:
-    image: husarnet/ros2router:1.6.3
+    image: husarnet/ros2router:1.9.0
     <<: *common-config
-    # volumes:
-    #   - ./filter.yaml:/filter.yaml
+    volumes:
+      - ./filter.yaml:/filter.yaml
     environment:
       - USER
-      # ==========================
-      # envs for Husarnet setup
-      # ==========================
-      - DISCOVERY_SERVER_LISTENING_PORT=11811
-      - DISCOVERY_SERVER_ID=0
-      # ==========================
-      # envs for LAN setup
-      # ==========================
-      # - ROS_LOCALHOST_ONLY=0
-      # - HUSARNET_PARTICIPANT_ENABLED=false
-    # entrypoint: tail -f /dev/null
+      - PARTICIPANTS=husarnet,shm
+      - ROBOT_NAMESPACE
 
-  rosbot-xl:
-    image: husarion/rosbot-xl:humble-0.8.12-20240115
+  rosbot:
+    image: husarion/rosbot-xl:humble-0.10.0-20240216
     <<:
       - *common-config
-      - *ros-envs
-    command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=${MECANUM:-True}
-
-  microros:
-    image: husarion/micro-ros-agent:humble-entrypoint
-    <<:
-      - *common-config
-      - *ros-envs
-    # ports:
-    #   - 192.168.77.2:8888:8888/udp
-    command: ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
+      - *dds-envs
+    # devices:
+    #   - /dev/ttyUSBDB # just for firmware flashing
+    #   - /dev/bus/usb/ # just for firmware flashing
+    command: >
+      ros2 launch /husarion_utils/rosbot.launch.py
+        mecanum:=${MECANUM:-True}
+        namespace:=${ROBOT_NAMESPACE}
+        healthcheck:=True
 
   rplidar:
-    image: husarion/rplidar:humble-1.0.1-20240104
+    image: husarion/rplidar:humble-1.0.1-20240216
     <<:
       - *common-config
-      - *ros-envs
+      - *dds-envs
     devices:
       - /dev/ttyRPLIDAR:/dev/ttyUSB0
     command: >
       ros2 launch /husarion_utils/rplidar.launch.py
         serial_baudrate:=${LIDAR_BAUDRATE:-256000}
         serial_port:=/dev/ttyUSB0
+        robot_namespace:=${ROBOT_NAMESPACE}
+        healthcheck:=True
 
   navigation:
-    image: husarion/navigation2:humble-namespace
+    image: husarion/navigation2:humble-1.1.12-20240123
     <<:
       - *common-config
-      - *ros-envs
+      - *dds-envs
     depends_on:
       rplidar: { condition: service_healthy }
-    #   rosbot-xl: { condition: service_healthy }
+      rosbot: { condition: service_healthy }
     volumes:
       - ./config/nav2_${CONTROLLER:-rpp}_params.yaml:/params.yaml
       - ./maps:/maps
+    environment:
+      - SAVE_MAP_PERIOD
+      - ROBOT_NAMESPACE
     command: >
       ros2 launch /husarion_utils/bringup_launch.py
         slam:=${SLAM:-True}
