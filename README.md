@@ -11,6 +11,15 @@ Autonomous navigation & mapping for ROSbot XL with RViz interface running on rem
 
 ![RViz ROSbot UI](.docs/rviz.png)
 
+## 🛍️ Necessary Hardware
+
+For the execution of this project, the following components are required:
+
+1. **[ROSbot XL](https://husarion.com/manuals/rosbot-xl/)** - with any SBC (RPi4, NUC or Jetson)
+2. **[SLAMTEC lidars](https://husarion.com/tutorials/ros-equipment/oak-1-lite/)** - A2, A3, S2 or S3 models
+
+These items are available for purchase as a complete kit at [our online store](https://store.husarion.com/collections/robots/products/rosbot-xl).
+
 ## Quick start (Physical ROSbot)
 
 > [!NOTE]
