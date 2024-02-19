@@ -11,6 +11,14 @@ Autonomous navigation & mapping for ROSbot XL with a web user interface powered 
 > | [**ros2router**](https://github.com/husarion/rosbot-xl-autonomy/tree/ros2router) | Running ROS 2 containers on ROSbot and on PC with the interface in RViz |
 > | [**foxglove**](https://github.com/husarion/rosbot-xl-autonomy/tree/foxglove) | Running ROS 2 containers only on ROSbot with a web user interface powered by Foxglove |
 
+## 🛍️ Necessary Hardware
+
+For the execution of this project prepare:
+
+1. **[ROSbot XL](https://husarion.com/manuals/rosbot-xl/)** - with any SBC (RPi4, NUC or Jetson)
+2. **[SLAMTEC lidars](https://husarion.com/tutorials/ros-equipment/rplidar/)** - A2, A3, S2 or S3 models
+
+These items are available for purchase as a complete kit at [our online store](https://store.husarion.com/collections/robots/products/rosbot-xl).
 
 ## Quick start (Physical ROSbot)
 
