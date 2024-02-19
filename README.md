@@ -16,7 +16,7 @@ Autonomous navigation & mapping for ROSbot XL with a web user interface powered 
 For the execution of this project prepare:
 
 1. **[ROSbot XL](https://husarion.com/manuals/rosbot-xl/)** - with any SBC (RPi4, NUC or Jetson)
-2. **[SLAMTEC lidars](https://husarion.com/tutorials/ros-equipment/rplidar/)** - A2, A3, S2 or S3 models
+2. **[SLAMTEC lidar](https://husarion.com/tutorials/ros-equipment/rplidar/)** - A2, A3, S2 or S3 models
 
 These items are available for purchase as a complete kit at [our online store](https://store.husarion.com/collections/robots/products/rosbot-xl).
 
